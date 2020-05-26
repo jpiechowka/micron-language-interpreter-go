@@ -1,4 +1,4 @@
-name: Build and test Micron Language Interpreter from latest commit on master branch
+name: Build and test from latest commit on master
 
 on:
   push:
