@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  build:
-    name: Build Micron Language Interpreter
+  build_and_test:
+    name: Build and test Micron Language Interpreter from latest commit
     runs-on: ubuntu-latest
     steps:
 
