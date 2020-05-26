@@ -1,4 +1,4 @@
-name: Micron Language Interpreter
+name: Build and test Micron Language Interpreter from latest commit on master branch
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
 
   build_and_test:
-    name: Build and test Micron Language Interpreter from latest commit
+    name: Build and test Micron Language Interpreter from latest commit on master branch
     runs-on: ubuntu-latest
     steps:
 
