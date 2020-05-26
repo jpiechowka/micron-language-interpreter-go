@@ -9,7 +9,7 @@ on:
 jobs:
 
   build_and_test:
-    name: Build and test Micron Language Interpreter from latest commit on master branch
+    name: Build and test
     runs-on: ubuntu-latest
     steps:
 
