@@ -5,16 +5,13 @@ Heavily inspired by Writing An Interpreter In Go book by Thorsten Ball:
 * https://interpreterbook.com/
 * https://amzn.com/B01N2T1VD2
 
-
 ### Interactive console
 To run Micron interactive console just execute the main binary: 
-
 ```
 ./micron-interpreter-${VERSION}-${OS}
 ```
 
 After that just type some code
-
 ```
    __  ____
   /  |/  (_)__________  ___ 
