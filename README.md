@@ -34,7 +34,7 @@ Automated builds with tests run after every commit to master. Status can be foun
 
 When version tags are pushed to the repository, release workflow will run and build the binaries for every operating system. After build is successful binaries will be uploaded and release will be published on the releases page: https://github.com/jpiechowka/micron-language-interpreter-go/releases
 
-![Build, test and create release from version tag](https://github.com/jpiechowka/micron-language-interpreter-go/workflows/Build,%20test%20and%20create%20release%20from%20version%20tag/badge.svg?branch=master)
+![Build, test and create release from version tag](https://github.com/jpiechowka/micron-language-interpreter-go/workflows/Build,%20test%20and%20create%20release%20from%20version%20tag/badge.svg)
 
 ### Download release binaries
 New and latest release binaries for all operating systems will be available to download from the releases page: https://github.com/jpiechowka/micron-language-interpreter-go/releases
