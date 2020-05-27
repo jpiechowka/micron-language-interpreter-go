@@ -14,7 +14,19 @@ func TestNextToken(t *testing.T) {
 			x + y;
 		};
 
-		let result = add(one, seven);`
+		let result = add(one, seven);
+        !-/*10;
+        0 < 10 >   5;
+
+        if (     5 <   10) {
+            return true;
+        } else {
+            return false;
+        }
+
+		7777 == 5555;
+        1111 != 33333333;
+`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -55,6 +67,43 @@ func TestNextToken(t *testing.T) {
 		{token.COMMA, ","},
 		{token.IDENT, "seven"},
 		{token.RPAREN, ")"},
+		{token.SEMICOLON, ";"},
+		{token.BANG, "!"},
+		{token.MINUS, "-"},
+		{token.SLASH, "/"},
+		{token.ASTERISK, "*"},
+		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "0"},
+		{token.LESSTHAN, "<"},
+		{token.INT, "10"},
+		{token.GREATERTHAN, ">"},
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.INT, "5"},
+		{token.LESSTHAN, "<"},
+		{token.INT, "10"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.TRUE, "true"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.FALSE, "false"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.INT, "7777"},
+		{token.EQUALITY, "=="},
+		{token.INT, "5555"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "1111"},
+		{token.INEQUALITY, "!="},
+		{token.INT, "33333333"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
