@@ -85,7 +85,7 @@ jobs:
       - name: Get release file name & upload URL
         id: get_release_info
         run: |
-          upload_url_value=`cat release_url/release_url.txt`
+          upload_url_value=`cat release_url.txt`
           echo ::set-output name=upload_url::$upload_url_value
         shell: bash
 
