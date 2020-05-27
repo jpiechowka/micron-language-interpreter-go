@@ -47,15 +47,15 @@ jobs:
           - os: ubuntu-latest
             binary_name: micron-interpreter-${{ github.ref }}-linux
             binary_rename_cmd: mv micron-language-interpreter-go micron-interpreter-${{ github.ref }}-linux
-            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt`
+            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt
           - os: macOS-latest
             binary_name: micron-interpreter-${{ github.ref }}-macos
             binary_rename_cmd: mv micron-language-interpreter-go micron-interpreter-${{ github.ref }}-macos
-            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt`
+            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt
           - os: windows-latest
             binary_name: micron-interpreter-${{ github.ref }}-win.exe
             binary_rename_cmd: ren micron-language-interpreter-go.exe micron-interpreter-${{ github.ref }}-win.exe
-            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt` # TODO fix this
+            read_upload_url_cmd: set /p upload_url_value=<release_url/release_url.txt
     steps:
 
       - name: Set up Go on ${{ matrix.os }}
