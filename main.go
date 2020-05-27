@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/jpiechowka/micron-language-interpreter-go/repl"
+	"os"
 	"os/user"
 )
 
 func main() {
 	printBanner()
 	printGreeting()
-	//repl.Start(os.Stdin, os.Stdout)
+	repl.Start(os.Stdin, os.Stdout)
 }
 
 func printBanner() {
