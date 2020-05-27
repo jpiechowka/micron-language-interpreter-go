@@ -45,18 +45,17 @@ jobs:
         os: [ubuntu-latest, macOS-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            binary_name: micron-interpreter-${{ github.ref }}-linux
-            binary_rename_cmd: mv micron-language-interpreter-go micron-interpreter-${{ github.ref }}-linux
-            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt
+            binary_sufix: linux
           - os: macOS-latest
-            binary_name: micron-interpreter-${{ github.ref }}-macos
-            binary_rename_cmd: mv micron-language-interpreter-go micron-interpreter-${{ github.ref }}-macos
-            read_upload_url_cmd: upload_url_value=`cat release_url/release_url.txt
+            binary_sufix: macOS
           - os: windows-latest
-            binary_name: micron-interpreter-${{ github.ref }}-win.exe
-            binary_rename_cmd: ren micron-language-interpreter-go.exe micron-interpreter-${{ github.ref }}-win.exe
-            read_upload_url_cmd: set /p upload_url_value=<release_url/release_url.txt
+            binary_sufix: win.exe
+
     steps:
+
+      - name: Get the version from the tag
+        id: get_version
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
 
       - name: Set up Go on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -73,8 +72,14 @@ jobs:
       - name: Test on ${{ matrix.os }}
         run: go test -v ./...
 
-      - name: Rename release binary on ${{ matrix.os }} to ${{ matrix.binary_name }}
-        run: ${{ matrix.binary_rename_cmd }}
+      - name: Get the version from the tag
+        id: get_version
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+        shell: bash
+
+      - name: Rename release binary
+        run: mv micron-language-interpreter-go* micron-interpreter-${{ steps.get_version.outputs.version}}-${{ matrix.binary_sufix }}
+        shell: bash
 
       - name: Load release URL file from release job
         uses: actions/download-artifact@v2
@@ -84,8 +89,9 @@ jobs:
       - name: Get release file name & upload URL
         id: get_release_info
         run: |
-          ${{ matrix.read_upload_url_cmd }}
+          upload_url_value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$upload_url_value
+        shell: bash
 
       - name: Upload release asset
         id: upload-release-asset
