@@ -1,6 +1,9 @@
 package lexer
 
-import "github.com/jpiechowka/micron-language-interpreter-go/token"
+import (
+	"fmt"
+	"github.com/jpiechowka/micron-language-interpreter-go/token"
+)
 
 type Lexer struct {
 	input            string // input string containing code
@@ -22,7 +25,25 @@ func (lexer *Lexer) NextToken() token.Token {
 
 	switch lexer.currentChar {
 	case '=':
-		nextToken = newToken(token.ASSIGN, lexer.currentChar)
+		// Check for equality sign "=="
+		if lexer.peekChar() == '=' {
+			previousChar := lexer.currentChar
+			lexer.readChar() // Proceed by one
+			literal := string(previousChar) + string(lexer.currentChar)
+			nextToken = newTwoCharToken(token.EQUALITY, literal)
+		} else {
+			nextToken = newToken(token.ASSIGN, lexer.currentChar)
+		}
+	case '!':
+		// Check for inequality sign "!="
+		if lexer.peekChar() == '=' {
+			previousChar := lexer.currentChar
+			lexer.readChar() // Proceed by one
+			literal := string(previousChar) + string(lexer.currentChar)
+			nextToken = newTwoCharToken(token.INEQUALITY, literal)
+		} else {
+			nextToken = newToken(token.BANG, lexer.currentChar)
+		}
 	case ';':
 		nextToken = newToken(token.SEMICOLON, lexer.currentChar)
 	case '(':
@@ -33,10 +54,20 @@ func (lexer *Lexer) NextToken() token.Token {
 		nextToken = newToken(token.COMMA, lexer.currentChar)
 	case '+':
 		nextToken = newToken(token.PLUS, lexer.currentChar)
+	case '-':
+		nextToken = newToken(token.MINUS, lexer.currentChar)
 	case '{':
 		nextToken = newToken(token.LBRACE, lexer.currentChar)
 	case '}':
 		nextToken = newToken(token.RBRACE, lexer.currentChar)
+	case '/':
+		nextToken = newToken(token.SLASH, lexer.currentChar)
+	case '>':
+		nextToken = newToken(token.GREATERTHAN, lexer.currentChar)
+	case '<':
+		nextToken = newToken(token.LESSTHAN, lexer.currentChar)
+	case '*':
+		nextToken = newToken(token.ASTERISK, lexer.currentChar)
 	case 0:
 		nextToken.Literal = ""
 		nextToken.TokenType = token.EOF
@@ -69,8 +100,25 @@ func (lexer *Lexer) readChar() {
 	lexer.nextReadPosition += 1
 }
 
+// peekChar is similar to readChar() but it doesn't increase currentPosition and nextReadPosition.
+// It will be used to check for symbols like "==" or "!=".
+func (lexer *Lexer) peekChar() byte {
+	if lexer.nextReadPosition >= len(lexer.input) {
+		return 0
+	} else {
+		return lexer.input[lexer.nextReadPosition]
+	}
+}
+
 func newToken(tokenType token.TokenType, char byte) token.Token {
 	return token.Token{TokenType: tokenType, Literal: string(char)}
+}
+
+func newTwoCharToken(tokenType token.TokenType, literal string) token.Token {
+	if len(literal) != 2 {
+		panic(fmt.Sprintf("Error creating two char token. Expected 2 char literal, got %d characters", len(literal)))
+	}
+	return token.Token{TokenType: tokenType, Literal: literal}
 }
 
 func (lexer *Lexer) readIdentifier() string {
