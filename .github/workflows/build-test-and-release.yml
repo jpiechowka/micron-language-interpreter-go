@@ -53,10 +53,6 @@ jobs:
 
     steps:
 
-      - name: Get the version from the tag
-        id: get_version
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
-
       - name: Set up Go on ${{ matrix.os }}
         uses: actions/setup-go@v2
         with:
