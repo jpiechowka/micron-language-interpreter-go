@@ -5,25 +5,6 @@ Heavily inspired by Writing An Interpreter In Go book by Thorsten Ball:
 * https://interpreterbook.com/
 * https://amzn.com/B01N2T1VD2
 
-### Interactive console
-To run Micron interactive console just execute the main binary: 
-```
-./micron-interpreter-${VERSION}-${OS}
-```
-
-After that just type some code
-```
-   __  ____
-  /  |/  (_)__________  ___ 
- / /|_/ / / __/ __/ _ \/ _ \
-/_/  /_/_/\__/_/  \___/_//_/
-
-Hello User! Welcome to the Micron language console!
-Feel free to type in the code below
-
->>
-```
-
 ### Automated builds
 Automated builds with tests run after every commit to master. Status can be found below
 
@@ -43,4 +24,23 @@ If you do not want to download one of the prebuilt binaries simply execute the c
 git clone https://github.com/jpiechowka/micron-language-interpreter-go.git
 cd micron-language-interpreter-go
 go build -v -a .
+```
+
+### Interactive console
+To run Micron interactive console just execute the main binary: 
+```
+./micron-interpreter-${VERSION}-${OS}
+```
+
+After that just type some code
+```
+   __  ____
+  /  |/  (_)__________  ___ 
+ / /|_/ / / __/ __/ _ \/ _ \
+/_/  /_/_/\__/_/  \___/_//_/
+
+Hello User! Welcome to the Micron language console!
+Feel free to type in the code below
+
+>>
 ```
