@@ -1,5 +1,7 @@
 package ast
 
+import "github.com/jpiechowka/micron-language-interpreter-go/token"
+
 type AstNode interface {
 	TokenLiteral() string
 }
@@ -25,3 +27,20 @@ func (program *Program) TokenLiteral() string {
 		return ""
 	}
 }
+
+type LetStatement struct {
+	Token token.Token
+	Name  *Identifier
+	Value Expression
+}
+
+func (letStatement *LetStatement) statementNode()       {}
+func (letStatement *LetStatement) TokenLiteral() string { return letStatement.Token.Literal }
+
+type Identifier struct {
+	Token token.Token
+	Value string
+}
+
+func (identifier *Identifier) expressionNode()      {}
+func (identifier *Identifier) TokenLiteral() string { return identifier.Token.Literal }
