@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/jpiechowka/micron-language-interpreter-go/ast"
 	"github.com/jpiechowka/micron-language-interpreter-go/lexer"
 	"github.com/jpiechowka/micron-language-interpreter-go/token"
@@ -8,15 +9,23 @@ import (
 
 type Parser struct {
 	lexer        *lexer.Lexer
+	errors       []string
 	currentToken token.Token
 	peekToken    token.Token
 }
 
 func New(lexer *lexer.Lexer) *Parser {
-	parser := &Parser{lexer: lexer}
+	parser := &Parser{
+		lexer:  lexer,
+		errors: []string{},
+	}
 	parser.nextToken() // Read two tokens so currentToken and peekToken are populated
 	parser.nextToken()
 	return parser
+}
+
+func (parser *Parser) GetErrors() []string {
+	return parser.errors
 }
 
 func (parser *Parser) nextToken() {
@@ -85,4 +94,9 @@ func (parser *Parser) expectPeek(expectedToken token.TokenType) bool {
 	} else {
 		return false
 	}
+}
+
+func (parser *Parser) peekError(token token.TokenType) {
+	errorMsg := fmt.Sprintf("Expected next token to be %s, got %s instead", token, parser.peekToken.TokenType)
+	parser.errors = append(parser.errors, errorMsg)
 }
