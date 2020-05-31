@@ -92,6 +92,7 @@ func (parser *Parser) expectPeek(expectedToken token.TokenType) bool {
 		parser.nextToken()
 		return true
 	} else {
+		parser.peekError(expectedToken)
 		return false
 	}
 }
