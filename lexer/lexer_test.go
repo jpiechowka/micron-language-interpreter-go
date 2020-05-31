@@ -114,11 +114,11 @@ func TestNextToken(t *testing.T) {
 		testedToken := lexer.NextToken()
 
 		if testedToken.TokenType != tokenType.expectedType {
-			t.Fatalf("Lexer test case [%d/%d] TokenType is wrong. Expected %q, got %q", i, len(tests), tokenType.expectedType, testedToken.TokenType)
+			t.Fatalf("Lexer test case [%d/%d] failed - TokenType is wrong. Expected %q, got %q", i, len(tests), tokenType.expectedType, testedToken.TokenType)
 		}
 
 		if testedToken.Literal != tokenType.expectedLiteral {
-			t.Fatalf("Lexer tests case [%d/%d] Literal is wrong. Expected %q, got %q", i, len(tests), tokenType.expectedLiteral, testedToken.Literal)
+			t.Fatalf("Lexer tests case [%d/%d] failed - Literal is wrong. Expected %q, got %q", i, len(tests), tokenType.expectedLiteral, testedToken.Literal)
 		}
 	}
 }
