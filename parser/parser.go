@@ -17,6 +17,9 @@ type Parser struct {
 	errors       []string
 	currentToken token.Token
 	peekToken    token.Token
+
+	prefixParseFunctions map[token.TokenType]prefixParseFunction
+	infixParseFunctions  map[token.TokenType]infixParseFunction
 }
 
 func New(lexer *lexer.Lexer) *Parser {
@@ -120,4 +123,12 @@ func (parser *Parser) expectPeek(expectedToken token.TokenType) bool {
 func (parser *Parser) peekError(token token.TokenType) {
 	errorMsg := fmt.Sprintf("Expected next token to be %s, got %s instead", token, parser.peekToken.TokenType)
 	parser.errors = append(parser.errors, errorMsg)
+}
+
+func (parser *Parser) registerPrefix(tokenType token.TokenType, function prefixParseFunction) {
+	parser.prefixParseFunctions[tokenType] = function
+}
+
+func (parser *Parser) registerInfix(tokenType token.TokenType, function infixParseFunction) {
+	parser.infixParseFunctions[tokenType] = function
 }
