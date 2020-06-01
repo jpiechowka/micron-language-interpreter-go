@@ -62,7 +62,7 @@ func TestReturnStatements(t *testing.T) {
 		returnStatement, ok := statement.(*ast.ReturnStatement)
 
 		if !ok {
-			t.Errorf("returnStatement is not *ast.LetStatement. Got %T instead", statement)
+			t.Errorf("returnStatement is not *ast.ReturnStatement. Got %T instead", statement)
 			continue
 		}
 
