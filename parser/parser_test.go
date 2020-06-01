@@ -19,11 +19,11 @@ func TestLetStatements(t *testing.T) {
 	checkParseErrors(t, parser)
 
 	if program == nil {
-		t.Fatalf("Let statements test failed - ParseProgram() retruned nil")
+		t.Fatalf("ParseProgram() retruned nil")
 	}
 
 	if len(program.Statements) != 3 {
-		t.Fatalf("Let statements test failed - program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
+		t.Fatalf("program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
 	}
 
 	tests := []struct {
@@ -55,7 +55,7 @@ func TestReturnStatements(t *testing.T) {
 	checkParseErrors(t, parser)
 
 	if len(program.Statements) != 3 {
-		t.Fatalf("Return statements test failed - program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
+		t.Fatalf("program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
 	}
 
 	for _, statement := range program.Statements {
@@ -69,6 +69,37 @@ func TestReturnStatements(t *testing.T) {
 		if returnStatement.TokenLiteral() != "return" {
 			t.Errorf("returnStatement.TokenLiteral is not 'return'. Got %s instead", returnStatement.TokenLiteral())
 		}
+	}
+}
+
+func TestIdentifierExpression(t *testing.T) {
+	input := "foobar;"
+
+	parser := New(lexer.New(input))
+
+	program := parser.ParseProgram()
+	checkParseErrors(t, parser)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program hasn't got enough statements. Got %d", len(program.Statements))
+	}
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. Got %T instead", program.Statements[0])
+	}
+
+	identifier, ok := statement.Expression.(*ast.Identifier)
+	if !ok {
+		t.Fatalf("statement.Expression is not *ast.Identifier. Got %T instead", statement.Expression)
+	}
+
+	if identifier.Value != "foobar" {
+		t.Errorf("identifier.Value is not %s. Got %s instead", "foobar", identifier.Value)
+	}
+
+	if identifier.TokenLiteral() != "foobar" {
+		t.Errorf("identifier.TokenLiteral() is not %s. Got %s instead", "foobar", identifier.TokenLiteral())
 	}
 }
 
