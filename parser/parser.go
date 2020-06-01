@@ -5,6 +5,7 @@ import (
 	"github.com/jpiechowka/micron-language-interpreter-go/ast"
 	"github.com/jpiechowka/micron-language-interpreter-go/lexer"
 	"github.com/jpiechowka/micron-language-interpreter-go/token"
+	"strconv"
 )
 
 const (
@@ -41,6 +42,7 @@ func New(lexer *lexer.Lexer) *Parser {
 
 	parser.prefixParseFunctions = make(map[token.TokenType]prefixParseFunction)
 	parser.registerPrefix(token.IDENT, parser.parseIdentifier)
+	parser.registerPrefix(token.INT, parser.parseIntegerLiteral)
 
 	parser.nextToken() // Read two tokens so currentToken and peekToken are populated
 	parser.nextToken()
@@ -175,4 +177,20 @@ func (parser *Parser) parseExpression(precedence int) ast.Expression {
 
 func (parser *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: parser.currentToken, Value: parser.currentToken.Literal}
+}
+
+func (parser *Parser) parseIntegerLiteral() ast.Expression {
+	literal := &ast.IntegerLiteral{Token: parser.currentToken}
+
+	value, err := strconv.ParseInt(parser.currentToken.Literal, 0, 64)
+
+	if err != nil {
+		errorMsg := fmt.Sprintf("Could not parse %q as integer", parser.currentToken.Literal)
+		parser.errors = append(parser.errors, errorMsg)
+		return nil
+	}
+
+	literal.Value = value
+
+	return literal
 }
