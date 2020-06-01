@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/jpiechowka/micron-language-interpreter-go/ast"
 	"github.com/jpiechowka/micron-language-interpreter-go/lexer"
 	"testing"
@@ -134,6 +135,48 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	}
 }
 
+func TestParsingPrefixExpressions(t *testing.T) {
+	prefixTests := []struct {
+		input        string
+		operator     string
+		integerValue int64
+	}{
+		{"!5;", "!", 5},
+		{"-15;", "-", 15},
+		{"!13371337;", "!", 13371337},
+		{"-13371337;", "-", 13371337},
+	}
+
+	for _, prefixTest := range prefixTests {
+		parser := New(lexer.New(prefixTest.input))
+
+		program := parser.ParseProgram()
+		checkParseErrors(t, parser)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. Got %d instead", 1, len(program.Statements))
+		}
+
+		statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. Got %T instead", program.Statements[0])
+		}
+
+		expression, ok := statement.Expression.(*ast.PrefixExpression)
+		if !ok {
+			t.Fatalf("statement.Expression is not ast.PrefixExpression. Got %T instead", statement.Expression)
+		}
+
+		if expression.Operator != prefixTest.operator {
+			t.Fatalf("expression.Operator is not %s. Got %s instead", prefixTest.operator, expression.Operator)
+		}
+
+		if !testIntegerLiteral(t, expression.Right, prefixTest.integerValue) {
+			return
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	if statement.TokenLiteral() != "let" {
 		t.Errorf("statement.TokenLiteral is not let. Got %s instead", statement.TokenLiteral())
@@ -171,4 +214,24 @@ func checkParseErrors(t *testing.T, parser *Parser) {
 	}
 
 	t.FailNow()
+}
+
+func testIntegerLiteral(t *testing.T, integerLiteral ast.Expression, value int64) bool {
+	integ, ok := integerLiteral.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("integerLiteral is not *ast.IntegerLiteral. Got %T instead", integerLiteral)
+		return false
+	}
+
+	if integ.Value != value {
+		t.Errorf("integ.Value is not %d. Got %d instead", value, integ.Value)
+		return false
+	}
+
+	if integ.TokenLiteral() != fmt.Sprintf("%d", value) {
+		t.Errorf("integ.TokenLiteral() is not %d. Got %s instead", value,
+			integ.TokenLiteral())
+		return false
+	}
+	return true
 }
