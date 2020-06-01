@@ -7,6 +7,17 @@ import (
 	"github.com/jpiechowka/micron-language-interpreter-go/token"
 )
 
+const (
+	_ int = iota
+	LOWEST
+	EQUALS        // ==
+	LESSORGREATER // > or <
+	SUM           // +
+	PRODUCT       // *
+	PREFIX        // -X or !X
+	CALL          // myFunction(X)
+)
+
 type (
 	prefixParseFunction func() ast.Expression
 	infixParseFunction  func(ast.Expression) ast.Expression
@@ -27,8 +38,13 @@ func New(lexer *lexer.Lexer) *Parser {
 		lexer:  lexer,
 		errors: []string{},
 	}
+
+	parser.prefixParseFunctions = make(map[token.TokenType]prefixParseFunction)
+	parser.registerPrefix(token.IDENT, parser.parseIdentifier)
+
 	parser.nextToken() // Read two tokens so currentToken and peekToken are populated
 	parser.nextToken()
+
 	return parser
 }
 
@@ -64,7 +80,7 @@ func (parser *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return parser.parseReturnStatement()
 	default:
-		return nil
+		return parser.parseExpressionStatement()
 	}
 }
 
@@ -131,4 +147,32 @@ func (parser *Parser) registerPrefix(tokenType token.TokenType, function prefixP
 
 func (parser *Parser) registerInfix(tokenType token.TokenType, function infixParseFunction) {
 	parser.infixParseFunctions[tokenType] = function
+}
+
+func (parser *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	statement := &ast.ExpressionStatement{Token: parser.currentToken}
+
+	statement.Expression = parser.parseExpression(LOWEST)
+
+	if parser.isComparedTokenSameAsPeek(token.SEMICOLON) {
+		parser.nextToken()
+	}
+
+	return statement
+}
+
+func (parser *Parser) parseExpression(precedence int) ast.Expression {
+	prefix := parser.prefixParseFunctions[parser.currentToken.TokenType]
+
+	if prefix == nil {
+		return nil
+	}
+
+	leftExpression := prefix()
+
+	return leftExpression
+}
+
+func (parser *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: parser.currentToken, Value: parser.currentToken.Literal}
 }
