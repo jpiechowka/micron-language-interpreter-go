@@ -7,6 +7,11 @@ import (
 	"github.com/jpiechowka/micron-language-interpreter-go/token"
 )
 
+type (
+	prefixParseFunction func() ast.Expression
+	infixParseFunction  func(ast.Expression) ast.Expression
+)
+
 type Parser struct {
 	lexer        *lexer.Lexer
 	errors       []string
