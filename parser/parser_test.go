@@ -19,11 +19,11 @@ func TestLetStatements(t *testing.T) {
 	checkParseErrors(t, parser)
 
 	if program == nil {
-		t.Fatalf("Parser test failed - ParseProgram() retruned nil")
+		t.Fatalf("Let statements test failed - ParseProgram() retruned nil")
 	}
 
 	if len(program.Statements) != 3 {
-		t.Fatalf("Parser test failed - program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
+		t.Fatalf("Let statements test failed - program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
 	}
 
 	tests := []struct {
@@ -42,6 +42,36 @@ func TestLetStatements(t *testing.T) {
 	}
 }
 
+func TestReturnStatements(t *testing.T) {
+	input := `
+		return 5;
+		return 10;
+		return 13371337;
+`
+
+	parser := New(lexer.New(input))
+
+	program := parser.ParseProgram()
+	checkParseErrors(t, parser)
+
+	if len(program.Statements) != 3 {
+		t.Fatalf("Return statements test failed - program.Statements length is not equal to 3. Actual length is: %d", len(program.Statements))
+	}
+
+	for _, statement := range program.Statements {
+		returnStatement, ok := statement.(*ast.ReturnStatement)
+
+		if !ok {
+			t.Errorf("returnStatement is not *ast.LetStatement. Got %T instead", statement)
+			continue
+		}
+
+		if returnStatement.TokenLiteral() != "return" {
+			t.Errorf("returnStatement.TokenLiteral is not 'return'. Got %s instead", returnStatement.TokenLiteral())
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	if statement.TokenLiteral() != "let" {
 		t.Errorf("statement.TokenLiteral is not let. Got %s instead", statement.TokenLiteral())
@@ -50,7 +80,7 @@ func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 
 	letStatement, ok := statement.(*ast.LetStatement)
 	if !ok {
-		t.Errorf("statement is not *ast.LetStatement. Got %T instead", statement)
+		t.Errorf("letStatement is not *ast.LetStatement. Got %T instead", statement)
 		return false
 	}
 
