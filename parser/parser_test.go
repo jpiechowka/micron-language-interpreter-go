@@ -177,6 +177,57 @@ func TestParsingPrefixExpressions(t *testing.T) {
 	}
 }
 
+func TestParsingInfixExpressions(t *testing.T) {
+	infixTests := []struct {
+		input      string
+		leftValue  int64
+		operator   string
+		rightValue int64
+	}{
+		{"77 + 1337;", 77, "+", 1337},
+		{"77 - 1337;", 77, "-", 1337},
+		{"77 * 1337;", 77, "*", 1337},
+		{"77 / 1337;", 77, "/", 1337},
+		{"77 > 1337;", 77, ">", 1337},
+		{"77 < 1337;", 77, "<", 1337},
+		{"77 == 1337;", 77, "==", 1337},
+		{"77 != 1337;", 77, "!=", 1337},
+	}
+
+	for _, infixTest := range infixTests {
+		parser := New(lexer.New(infixTest.input))
+
+		program := parser.ParseProgram()
+		checkParseErrors(t, parser)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. Got %d instead", 1, len(program.Statements))
+		}
+
+		statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. Got %T instead", program.Statements[0])
+		}
+
+		expression, ok := statement.Expression.(*ast.InfixExpression)
+		if !ok {
+			t.Fatalf("statement.Expression is not ast.InfixExpression. Got %T instead", statement.Expression)
+		}
+
+		if !testIntegerLiteral(t, expression.Left, infixTest.leftValue) {
+			return
+		}
+
+		if expression.Operator != infixTest.operator {
+			t.Fatalf("expression.Operator is not %s. Got %s instead", infixTest.operator, expression.Operator)
+		}
+
+		if !testIntegerLiteral(t, expression.Right, infixTest.rightValue) {
+			return
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	if statement.TokenLiteral() != "let" {
 		t.Errorf("statement.TokenLiteral is not let. Got %s instead", statement.TokenLiteral())
