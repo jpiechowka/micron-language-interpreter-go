@@ -375,3 +375,18 @@ func testIdentifier(t *testing.T, expression ast.Expression, value string) bool 
 
 	return true
 }
+
+func testLiteralExpression(t *testing.T, expression ast.Expression, expected interface{}) bool {
+	switch v := expected.(type) {
+	case int:
+		return testIntegerLiteral(t, expression, int64(v))
+	case int64:
+		return testIntegerLiteral(t, expression, v)
+	case string:
+		return testIdentifier(t, expression, v)
+	}
+
+	t.Errorf("Type of expression is not handled. Got %T", expression)
+
+	return false
+}
