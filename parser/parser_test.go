@@ -355,3 +355,23 @@ func testIntegerLiteral(t *testing.T, integerLiteral ast.Expression, value int64
 	}
 	return true
 }
+
+func testIdentifier(t *testing.T, expression ast.Expression, value string) bool {
+	identifier, ok := expression.(*ast.Identifier)
+	if !ok {
+		t.Errorf("expression is not *ast.Identifier. Got %T instead", expression)
+		return false
+	}
+
+	if identifier.Value != value {
+		t.Errorf("identifier.Value is not %s. Got %s instead", value, identifier.Value)
+		return false
+	}
+
+	if identifier.TokenLiteral() != value {
+		t.Errorf("identifier.TokenLiteral() is not %s. Got %s instead", value, identifier.TokenLiteral())
+		return false
+	}
+
+	return true
+}
