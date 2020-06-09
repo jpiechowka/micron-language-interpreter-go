@@ -115,6 +115,15 @@ func (infixExpression *InfixExpression) String() string {
 	return out.String()
 }
 
+type Boolean struct {
+	Token token.Token
+	Value bool
+}
+
+func (boolean *Boolean) expressionNode()      {}
+func (boolean *Boolean) TokenLiteral() string { return boolean.Token.Literal }
+func (boolean *Boolean) String() string       { return boolean.Token.Literal }
+
 func (program *Program) String() string {
 	var out bytes.Buffer
 

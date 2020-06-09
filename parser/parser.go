@@ -51,6 +51,7 @@ func New(lexer *lexer.Lexer) *Parser {
 		errors: []string{},
 	}
 
+	// Prefix parsing
 	parser.prefixParseFunctions = make(map[token.TokenType]prefixParseFunction)
 
 	parser.registerPrefix(token.IDENT, parser.parseIdentifier)
@@ -58,6 +59,7 @@ func New(lexer *lexer.Lexer) *Parser {
 	parser.registerPrefix(token.BANG, parser.parsePrefixExpression)
 	parser.registerPrefix(token.MINUS, parser.parsePrefixExpression)
 
+	//Infix parsing
 	parser.infixParseFunctions = make(map[token.TokenType]infixParseFunction)
 
 	parser.registerInfix(token.PLUS, parser.parseInfixExpression)
@@ -68,6 +70,10 @@ func New(lexer *lexer.Lexer) *Parser {
 	parser.registerInfix(token.INEQUALITY, parser.parseInfixExpression)
 	parser.registerInfix(token.LESSTHAN, parser.parseInfixExpression)
 	parser.registerInfix(token.GREATERTHAN, parser.parseInfixExpression)
+
+	// Boolean parsing
+	parser.registerPrefix(token.TRUE, parser.parseBoolean)
+	parser.registerPrefix(token.FALSE, parser.parseBoolean)
 
 	parser.nextToken() // Read two tokens so currentToken and peekToken are populated
 	parser.nextToken()
@@ -281,4 +287,8 @@ func (parser *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	expression.Right = parser.parseExpression(precedence)
 
 	return expression
+}
+
+func (parser *Parser) parseBoolean() ast.Expression {
+	return &ast.Boolean{Token: parser.currentToken, Value: parser.isComparedTokenSameAsCurrent(token.TRUE)}
 }
