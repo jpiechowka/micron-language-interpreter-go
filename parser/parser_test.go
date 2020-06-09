@@ -171,7 +171,7 @@ func TestParsingPrefixExpressions(t *testing.T) {
 			t.Fatalf("expression.Operator is not %s. Got %s instead", prefixTest.operator, expression.Operator)
 		}
 
-		if !testIntegerLiteral(t, expression.Right, prefixTest.integerValue) {
+		if !testLiteralExpression(t, expression.Right, prefixTest.integerValue) {
 			return
 		}
 	}
@@ -214,15 +214,15 @@ func TestParsingInfixExpressions(t *testing.T) {
 			t.Fatalf("statement.Expression is not ast.InfixExpression. Got %T instead", statement.Expression)
 		}
 
-		if !testIntegerLiteral(t, expression.Left, infixTest.leftValue) {
-			return
-		}
-
 		if expression.Operator != infixTest.operator {
 			t.Fatalf("expression.Operator is not %s. Got %s instead", infixTest.operator, expression.Operator)
 		}
 
-		if !testIntegerLiteral(t, expression.Right, infixTest.rightValue) {
+		if !testLiteralExpression(t, expression.Left, infixTest.leftValue) {
+			return
+		}
+
+		if !testLiteralExpression(t, expression.Right, infixTest.rightValue) {
 			return
 		}
 	}
