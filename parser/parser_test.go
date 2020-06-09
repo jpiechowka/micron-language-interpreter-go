@@ -297,6 +297,36 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 	}
 }
 
+func TestBooleanExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{input: "true;", expected: true},
+		{input: "false;", expected: false},
+	}
+
+	for _, boolTest := range tests {
+		parser := New(lexer.New(boolTest.input))
+
+		program := parser.ParseProgram()
+		checkParseErrors(t, parser)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program has not enough statements. Got %d", len(program.Statements))
+		}
+
+		expression, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. Got %T instead", program.Statements[0])
+		}
+
+		if !testBooleanLiteral(t, expression.Expression, boolTest.expected) {
+			return
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	if statement.TokenLiteral() != "let" {
 		t.Errorf("statement.TokenLiteral is not let. Got %s instead", statement.TokenLiteral())
@@ -408,6 +438,26 @@ func testInfixExpression(t *testing.T, expression ast.Expression, left interface
 	}
 
 	if !testLiteralExpression(t, opExp.Right, right) {
+		return false
+	}
+
+	return true
+}
+
+func testBooleanLiteral(t *testing.T, expression ast.Expression, boolValue bool) bool {
+	boolean, ok := expression.(*ast.Boolean)
+	if !ok {
+		t.Errorf("expression is not *ast.Boolean. Got %T instead", expression)
+		return false
+	}
+
+	if boolean.Value != boolValue {
+		t.Errorf("boolean.Value is not %t. Got %t instead", boolValue, boolean.Value)
+		return false
+	}
+
+	if boolean.TokenLiteral() != fmt.Sprintf("%t", boolValue) {
+		t.Errorf("boolean.TokenLiteral() is not %t. Got %s instead", boolValue, boolean.TokenLiteral())
 		return false
 	}
 
